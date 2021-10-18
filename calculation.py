@@ -1,31 +1,23 @@
 import array
-from command import PIDs
+import config
 
 class calculation:
     def __init__(self) -> None:
         pass
 
+    @classmethod
     def calc_value(self, command_name, str_reply) -> int:
-        command_formula = [
-            self.engine_load_calc,
-            self.engine_coolant_temp_calc,
-            self.engine_speed_calc,
-            self.vehicle_speed_calc,
-            self.intake_air_temp_calc,
-            # self.mass_air_flow_calc,
-            self.run_time_since_engine_start_calc,
-            # self.engine_oil_temp_calc
-        ]
-        command_map = dict.fromkeys(PIDs, None)
-        for index, pid in enumerate(PIDs):
-            command_map[pid] = command_formula[index]
+        command_map = dict.fromkeys(config.PIDs, None)
+        for index, pid in enumerate(config.PIDs):
+            command_map[pid] = config.COMMAND_FORMULA[index]
         try:
-            value = command_map[command_name](str_reply)
+            value = command_map[command_name](self, str_reply)
             return value
-        except:
+        except Exception as e:
+            print(e)
             raise Exception(f"Can't calc {command_name}: (str_reply){str_reply}")
 
-    def byte_2_int(self, str_reply) -> array:
+    def byte_2_int(str_reply) -> array:
         byte2array = str_reply.split()[2:]
         value_array = []
         for value_byte in byte2array:

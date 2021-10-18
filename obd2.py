@@ -1,8 +1,11 @@
+import array
 import sys
 import subprocess
 import serial
 from serial.serialutil import SerialException
 import re
+from command import command
+from calculation import calculation
 import config
 
 def debug(str):
@@ -10,6 +13,7 @@ def debug(str):
 
 class OBD2:
     def __init__(self) -> None:
+        self.clc = calculation()
         self.socket = None
         self.process_listen = None
         try:
@@ -62,6 +66,24 @@ class OBD2:
         reply = self.socket.readline()
         format_reply = re.sub('\s?\r\n$', '', reply.decode('ascii'))
         return format_reply
+
+    def sequenceData(self) -> array:
+        values = []
+        for pname, cmd in config.PIDs.items():
+            str_reply = None
+            try:
+                str_reply = self.commandQuery(command.get_query_command(self, cmd), pname)
+                if command.valid_response(self, cmd, str_reply):
+                    value = self.clc.calc_value(pname, str_reply)
+                    print(f'{pname} : {value} {config.UNITs[pname]}')
+                    values.append(value)
+                else:
+                    self.error(pname)
+            except Exception as e:
+                print(e)
+                print(f'not valid: {str_reply}')
+            self.waitCommand()
+        return values
 
     def waitCommand(self):
         # debug('Wait')

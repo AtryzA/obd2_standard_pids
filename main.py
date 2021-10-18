@@ -1,24 +1,16 @@
+import multiprocessing
+from gui import gui
 from obd2 import OBD2
-from command import PIDs, UNITs, command
-from calculation import calculation
 
 def main():
+    ui = gui()
+    process = multiprocessing.Process(target=ui.start)
     obd = OBD2()
-    cmd = command()
-    calc = calculation()
     try:
+        process.start()
         while True:
-            for pname, comd in PIDs.items():
-                try:
-                    str_reply = obd.commandQuery(cmd.get_query(comd), pname)
-                    if cmd.valid_response(comd, str_reply):
-                        value = calc.calc_value(pname, str_reply)
-                        print(f'{pname} : {value} {UNITs[pname]}')
-                    else:
-                        obd.error(pname)
-                except:
-                    print(f'not valid: {str_reply}')
-                obd.waitCommand()
+            values = obd.sequenceData()
+            print(values)
     finally:
         obd.cleanup()
 
