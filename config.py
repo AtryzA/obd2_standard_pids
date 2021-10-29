@@ -19,6 +19,7 @@ PIDs = {
     "RUN_TIME_SINCE_ENGINE_START" : '1F',
     # "ENGINE_OIL_TEMP" : '5C',
 }
+VALID_LEN = len(PIDs)
 COMMAND_FORMULA = [
     calculation.engine_load_calc,
     calculation.engine_coolant_temp_calc,
