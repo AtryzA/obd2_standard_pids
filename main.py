@@ -5,13 +5,13 @@ import config
 
 def main():
     ui = gui()
-    obd = OBD2()
     values = multiprocessing.Array('d', range(config.VALID_LEN))
     for index in range(config.VALID_LEN):
         values[index] = 0
     process = multiprocessing.Process(target=ui.start, args=[values])
     try:
         process.start()
+        obd = OBD2()
         while True:
             data = obd.sequenceData()
             for index, element in enumerate(data):

@@ -40,6 +40,16 @@ UNITs = {
     "RUN_TIME_SINCE_ENGINE_START" : 'seconds',
     # "ENGINE_OIL_TEMP" : '°C',
 }
+UNITs_LIMIT = {
+    "ENGINE_LOAD" : 100,
+    "ENGINE_COOLANT_TEMP" : 100,
+    "ENGINE_SPEED" : 8000,
+    "VEHICLE_SPEED" : 160,
+    "INTAKE_AIR_TEMP" : 40,
+    # "MASS_AIR_FLOW" : 'grams/sec',
+    "RUN_TIME_SINCE_ENGINE_START" : 60*60*4,
+    # "ENGINE_OIL_TEMP" : '°C',
+}
 ERORRs = [
     'UNABLE TO CONNECT',
     'BUS INIT... ERROR',
