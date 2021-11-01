@@ -16,10 +16,18 @@ PIDs = {
     "VEHICLE_SPEED" : '0D',
     "INTAKE_AIR_TEMP" : '0F',
     # "MASS_AIR_FLOW" : '10',
+    "THROTTLE_POSITION" : '11',
     "RUN_TIME_SINCE_ENGINE_START" : '1F',
     # "ENGINE_OIL_TEMP" : '5C',
 }
-VALID_LEN = len(PIDs)
+VALID_PIDs_LEN = len(PIDs)
+GRAPH_VISIBLE = {
+    "ENGINE_LOAD" : 0,
+    "ENGINE_SPEED" : 2,
+    "VEHICLE_SPEED" : 3,
+    "THROTTLE_POSITION" : 5
+}
+GRAPH_VISIBLE_LEN = len(GRAPH_VISIBLE)
 COMMAND_FORMULA = [
     calculation.engine_load_calc,
     calculation.engine_coolant_temp_calc,
@@ -27,6 +35,7 @@ COMMAND_FORMULA = [
     calculation.vehicle_speed_calc,
     calculation.intake_air_temp_calc,
     # calculation.mass_air_flow_calc,
+    calculation.throttle_position_calc,
     calculation.run_time_since_engine_start_calc,
     # calculation.engine_oil_temp_calc
 ]
@@ -37,17 +46,8 @@ UNITs = {
     "VEHICLE_SPEED" : 'km/h',
     "INTAKE_AIR_TEMP" : '°C',
     # "MASS_AIR_FLOW" : 'grams/sec',
+    "THROTTLE_POSITION": '%',
     "RUN_TIME_SINCE_ENGINE_START" : 'seconds',
-    # "ENGINE_OIL_TEMP" : '°C',
-}
-UNITs_LIMIT = {
-    "ENGINE_LOAD" : 100,
-    "ENGINE_COOLANT_TEMP" : 100,
-    "ENGINE_SPEED" : 8000,
-    "VEHICLE_SPEED" : 160,
-    "INTAKE_AIR_TEMP" : 40,
-    # "MASS_AIR_FLOW" : 'grams/sec',
-    "RUN_TIME_SINCE_ENGINE_START" : 60*60*4,
     # "ENGINE_OIL_TEMP" : '°C',
 }
 ERORRs = [

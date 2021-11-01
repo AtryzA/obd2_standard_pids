@@ -57,6 +57,11 @@ class calculation:
         calc_value = (256 * int(A) + int(B)) / 100
         return calc_value
 
+    def throttle_position_calc(self, value) -> int:
+        A = self.byte_2_int(value)
+        calc_value = 100 / 255 * A
+        return calc_value
+
     def run_time_since_engine_start_calc(self, value) -> int:
         A, B = self.byte_2_int(value)
         calc_value = 256 * int(A) + int(B)

@@ -5,8 +5,8 @@ import config
 
 def main():
     ui = gui()
-    values = multiprocessing.Array('d', range(config.VALID_LEN))
-    for index in range(config.VALID_LEN):
+    values = multiprocessing.Array('d', range(config.VALID_PIDs_LEN))
+    for index in range(config.VALID_PIDs_LEN):
         values[index] = 0
     process = multiprocessing.Process(target=ui.start, args=[values])
     try:
