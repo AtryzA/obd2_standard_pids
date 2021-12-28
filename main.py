@@ -1,3 +1,4 @@
+import time
 import multiprocessing
 from gui import gui
 from obd2 import OBD2
@@ -13,6 +14,7 @@ def main():
         process.start()
         obd = OBD2()
         while True:
+            time.sleep(0.5)
             data = obd.sequenceData()
             for index, element in enumerate(data):
                 values[index] = element

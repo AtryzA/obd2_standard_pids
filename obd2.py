@@ -1,3 +1,5 @@
+import csv
+import datetime
 import array
 import sys
 import subprocess
@@ -22,6 +24,18 @@ class OBD2:
             print(e)
             self.cleanup()
             sys.exit()
+        try:
+            logpath = "output/"
+            filename = "log_" + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + ".csv"
+            self.fullpath = logpath + filename
+            init_info = list(config.PIDs.keys())
+            with open(self.fullpath, "w", newline="") as logfile:
+                writer = csv.writer(logfile)
+                writer.writerow(init_info)
+        except Exception as e:
+            print(e)
+            self.cleanup()
+            sys.exit()
 
     def setup(self) -> None:
         debug('Set UP')
@@ -41,15 +55,14 @@ class OBD2:
         debug('Clean UP')
         try:
             self.socket.close()
-        except:
-            pass
+        except Exception as e:
+            print(e)
         self.process_listen.kill()
         subprocess.run(['sudo', 'rfcomm', 'release', str(config.BIND_PORT)])
 
     def bindingBluetooth(self) -> None:
         debug('Binding')
         subprocess.run(['sudo', 'hciconfig', 'hci0', 'up'])
-        subprocess.run(['sudo', 'hcitool', 'scan', '--flush'])
         subprocess.run(['sudo', 'rfcomm', 'bind', str(config.BIND_PORT), str(config.ELM_ADDRESS)])
         self.process_listen = subprocess.Popen(['rfcomm', 'listen', str(config.BIND_PORT), str(config.CHANNEL), '&'])
 
