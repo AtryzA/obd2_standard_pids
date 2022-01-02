@@ -1,7 +1,7 @@
+import time
 import csv
 import datetime
 import array
-import sys
 import subprocess
 import serial
 from serial.serialutil import SerialException
@@ -21,21 +21,33 @@ class OBD2:
         try:
             self.setup()
         except Exception as e:
-            print(e)
             self.cleanup()
-            sys.exit()
+
+    def start(self, values):
+        first_write = True
+        self.logwriter(first_write)
+        first_write = not first_write
+        while True:
+            time.sleep(0.7)
+            values = self.sequenceData()
+            self.logwriter(first_write, values)
+
+    def logwriter(self, first_write, values=None):
         try:
-            logpath = "output/"
-            filename = "log_" + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + ".csv"
-            self.fullpath = logpath + filename
-            init_info = list(config.PIDs.keys())
-            with open(self.fullpath, "w", newline="") as logfile:
-                writer = csv.writer(logfile)
-                writer.writerow(init_info)
+            if first_write:
+                logpath = "output/"
+                filename = "log_" + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + ".csv"
+                self.fullpath = logpath + filename
+                init_info = list(config.PIDs.keys())
+                with open(self.fullpath, "w", newline="") as logfile:
+                    writer = csv.writer(logfile)
+                    writer.writerow(init_info)
+            else:
+                with open(self.fullpath, "a", newline="") as logfile:
+                    writer = csv.writer(logfile)
+                    writer.writerow(values)
         except Exception as e:
             print(e)
-            self.cleanup()
-            sys.exit()
 
     def setup(self) -> None:
         debug('Set UP')
@@ -55,10 +67,10 @@ class OBD2:
         debug('Clean UP')
         try:
             self.socket.close()
+            self.process_listen.kill()
+            subprocess.run(['sudo', 'rfcomm', 'release', str(config.BIND_PORT)])
         except Exception as e:
-            print(e)
-        self.process_listen.kill()
-        subprocess.run(['sudo', 'rfcomm', 'release', str(config.BIND_PORT)])
+            pass
 
     def bindingBluetooth(self) -> None:
         debug('Binding')
@@ -70,6 +82,7 @@ class OBD2:
         debug('CreateSocket')
         try:
             self.socket = serial.Serial(f'/dev/rfcomm{config.BIND_PORT}', baudrate)
+            # self.socket = serial.Serial(f'/dev/ttyUSB0', 115200)
         except SerialException:
             raise Exception('Connection Failed')
 
@@ -93,7 +106,6 @@ class OBD2:
                 else:
                     self.error(pname)
             except Exception as e:
-                print(e)
                 print(f'not valid: {str_reply}')
             self.waitCommand()
         return values

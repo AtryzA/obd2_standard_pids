@@ -5,21 +5,20 @@ from obd2 import OBD2
 import config
 
 def main():
-    ui = gui()
-    values = multiprocessing.Array('d', range(config.VALID_PIDs_LEN))
-    for index in range(config.VALID_PIDs_LEN):
-        values[index] = 0
-    process = multiprocessing.Process(target=ui.start, args=[values])
     try:
-        process.start()
         obd = OBD2()
-        while True:
-            time.sleep(0.5)
-            data = obd.sequenceData()
-            for index, element in enumerate(data):
-                values[index] = element
-    finally:
-        obd.cleanup()
+        ui = gui()
+        values = multiprocessing.Array('d', range(config.VALID_PIDs_LEN))
+        for index in range(config.VALID_PIDs_LEN):
+            values[index] = 0
+        obd_process = multiprocessing.Process(target=obd.start, args=[values])
+        ui_process = multiprocessing.Process(target=ui.start, args=[values])
+        process = [obd_process, ui_process]
+        for p in process:
+            p.start()
+    except:
+        # obd.cleanup()
+        ui.cleanup()
 
 if __name__ == "__main__":
     main()

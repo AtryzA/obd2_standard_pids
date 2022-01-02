@@ -8,18 +8,17 @@ import tkinter as tk
 from tkinter import ttk
 
 from matplotlib.figure import Figure
-import config
-
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib import pyplot as plt
+
+import config
 
 class gui:
     def __init__(self) -> None:
         self.root = None
         try:
             self.setup()
-        except:
-            sys.exit()
+        except Exception as e:
+            self.cleanup()
 
     def setup(self):
         self.call_root_window()
@@ -29,6 +28,12 @@ class gui:
         self.x, self.y = [], [[] for _ in range(config.GRAPH_VISIBLE_LEN)]
         self.y_max = {}
         self.xlim = [0, 60]
+
+    def cleanup(self):
+        try:
+            del self
+        except Exception as e:
+            print(e)
 
     def call_root_window(self):
         self.root = tk.Tk()
