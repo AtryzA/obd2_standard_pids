@@ -10,6 +10,8 @@ from command import command
 from calculation import calculation
 import config
 
+import random
+
 def debug(str):
     print(f'----{str}----')
 
@@ -21,16 +23,18 @@ class OBD2:
         try:
             self.setup()
         except Exception as e:
-            self.cleanup()
+            pass
 
     def start(self, values):
         first_write = True
         self.logwriter(first_write)
         first_write = not first_write
         while True:
-            time.sleep(0.7)
-            values = self.sequenceData()
-            self.logwriter(first_write, values)
+            time.sleep(1)
+            v = self.sequenceData()
+            for i in range(config.VALID_PIDs_LEN):
+                values[i] = v[i]
+            self.logwriter(first_write, v)
 
     def logwriter(self, first_write, values=None):
         try:
