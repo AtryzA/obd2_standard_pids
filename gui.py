@@ -51,7 +51,7 @@ class gui:
         self.tabs.append(spec_tab)
         nb.add(spec_tab, text="ALL_Params", padding=3)
         nb.bind("<<NotebookTabChanged>>", self.pltupdate)
-        nb.pack(expand=1, fill="both")
+        nb.pack(expand=1, fill="both", pady=10)
 
     def call_onepage_widget(self):
         fig = Figure()

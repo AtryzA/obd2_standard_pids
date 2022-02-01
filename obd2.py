@@ -30,11 +30,12 @@ class OBD2:
         self.logwriter(first_write)
         first_write = not first_write
         while True:
-            time.sleep(1)
+            time.sleep(0.5)
             v = self.sequenceData()
-            for i in range(config.VALID_PIDs_LEN):
-                values[i] = v[i]
-            self.logwriter(first_write, v)
+            if len(v) == config.VALID_PIDs_LEN:
+                for i in range(config.VALID_PIDs_LEN):
+                    values[i] = v[i]
+                self.logwriter(first_write, v)
 
     def logwriter(self, first_write, values=None):
         try:
@@ -97,8 +98,15 @@ class OBD2:
         format_reply = re.sub('\s?\r\n$', '', reply.decode('ascii'))
         return format_reply
 
+    def process1(self):
+        values = []
+        for index in range(7):
+            values.append(random.random() / (index + 1))
+        return values
+
     def sequenceData(self) -> array:
         values = []
+        # values = self.process1()
         for pname, cmd in config.PIDs.items():
             str_reply = None
             try:
